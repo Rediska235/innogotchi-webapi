@@ -20,9 +20,7 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public Farm CreateFarm(HttpContext httpContext, FarmCreateDto request)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
+            var user = GetUserByContext(httpContext);
 
             if (_db.Farms.Any(f => f.UserId == user.Id))
             {
@@ -40,16 +38,9 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public Farm GetDetails(HttpContext httpContext)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
+            var farm = GetFarmByContext(httpContext);
 
-            if (!_db.Farms.Any(f => f.UserId == user.Id))
-            {
-                throw new Exception("You don't have a farm.");
-            }
-
-            return _db.Farms.FirstOrDefault(f => f.UserId == user.Id);
+            return farm;
         }
 
         public List<Farm> GetFriendsFarms(HttpContext httpContext)
@@ -59,12 +50,35 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public List<Pet> GetPets(HttpContext httpContext)
         {
-            throw new NotImplementedException();
+            var farm = GetFarmByContext(httpContext);
+            
+            return _db.Pets.Where(p => p.Farm.Id == farm.Id).ToList();
         }
 
         public User AddFriend(HttpContext httpContext)
         {
             throw new NotImplementedException();
+        }
+
+        private Farm GetFarmByContext(HttpContext httpContext)
+        {
+            var user = GetUserByContext(httpContext);
+
+            var farm = _db.Farms.FirstOrDefault(f => f.UserId == user.Id);
+            if (farm == null)
+            {
+                throw new Exception("You don't have a farm.");
+            }
+
+            return farm;
+        }
+        private User GetUserByContext(HttpContext httpContext)
+        {
+            var identity = httpContext.User.Identity as ClaimsIdentity;
+            string email = identity.FindFirst(ClaimTypes.Email).Value;
+            var user = _db.Users.FirstOrDefault(u => u.Email == email);
+
+            return user;
         }
     }
 }

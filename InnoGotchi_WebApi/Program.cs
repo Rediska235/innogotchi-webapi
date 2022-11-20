@@ -1,7 +1,8 @@
 using InnoGotchi_WebApi;
 using InnoGotchi_WebApi.Data;
-using InnoGotchi_WebApi.Services.FarmService;
 using InnoGotchi_WebApi.Services.UserService;
+using InnoGotchi_WebApi.Services.FarmService;
+using InnoGotchi_WebApi.Services.PetService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFarmService, FarmService>();
+builder.Services.AddScoped<IPetService, PetService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

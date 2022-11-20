@@ -10,6 +10,8 @@ namespace InnoGotchi_WebApi.Models.Pet
         [MaxLength(20)]
         public string Name { get; set; } = "";
         
+        public Farm.Farm Farm { get; set; }
+        
         public int Eyes { get; set; }        
         public int Nose { get; set; }
         public int Mouth { get; set; }

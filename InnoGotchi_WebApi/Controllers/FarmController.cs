@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using InnoGotchi_WebApi.Services.FarmService;
+using InnoGotchi_WebApi.Models.Pet;
 
 namespace InnoGotchi_WebApi.Controllers
 {
@@ -39,6 +40,22 @@ namespace InnoGotchi_WebApi.Controllers
             try
             {
                 result = _farmService.GetDetails(HttpContext);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("getPets"), Authorize]
+        public async Task<ActionResult<List<Pet>>> GetPets()
+        {
+            List<Pet> result;
+            try
+            {
+                result = _farmService.GetPets(HttpContext);
             }
             catch (Exception e)
             {

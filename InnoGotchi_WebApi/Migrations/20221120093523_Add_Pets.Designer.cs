@@ -3,6 +3,7 @@ using InnoGotchi_WebApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi_WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221120093523_Add_Pets")]
+    partial class Add_Pets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +64,6 @@ namespace InnoGotchi_WebApi.Migrations
                     b.Property<int>("Eyes")
                         .HasColumnType("int");
 
-                    b.Property<int>("FarmId")
-                        .HasColumnType("int");
-
                     b.Property<int>("HappinessDays")
                         .HasColumnType("int");
 
@@ -86,8 +85,6 @@ namespace InnoGotchi_WebApi.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FarmId");
 
                     b.ToTable("Pets");
                 });
@@ -133,17 +130,6 @@ namespace InnoGotchi_WebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.Pet.Pet", b =>
-                {
-                    b.HasOne("InnoGotchi_WebApi.Models.Farm.Farm", "Farm")
-                        .WithMany()
-                        .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Farm");
                 });
 
             modelBuilder.Entity("InnoGotchi_WebApi.Models.User.User", b =>
