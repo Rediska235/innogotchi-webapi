@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using InnoGotchi_WebApi.Data;
-using InnoGotchi_WebApi.Models.Farm;
+﻿using InnoGotchi_WebApi.Models.Farm;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using InnoGotchi_WebApi.Services.FarmService;
 
 namespace InnoGotchi_WebApi.Controllers
 {
@@ -11,34 +9,27 @@ namespace InnoGotchi_WebApi.Controllers
     [ApiController]
     public class FarmController : ControllerBase
     {
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
+        private readonly IFarmService _farmService;
 
-        public FarmController(AppDbContext db, IMapper mapper)
+        public FarmController(IFarmService farmService)
         {
-            _db = db;
-            _mapper = mapper;
+            _farmService = farmService;
         }
 
         [HttpPost("createFarm"), Authorize]
         public async Task<ActionResult<Farm>> CreateFarm(FarmCreateDto request)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            if (_db.Farms.Any(f => f.UserId == user.Id))
+            Farm result;
+            try
             {
-                return BadRequest("You already have a farm.");
+                result = _farmService.CreateFarm(HttpContext, request);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
-            Farm farm = _mapper.Map<Farm>(request);
-            farm.User = user;
-
-            _db.Add(farm);
-            _db.SaveChanges();
-
-            return Ok(farm);
+            return Ok(result);
         }
     }
 }
