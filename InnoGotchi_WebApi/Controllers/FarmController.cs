@@ -31,5 +31,21 @@ namespace InnoGotchi_WebApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("getDetails"), Authorize]
+        public async Task<ActionResult<Farm>> GetDetails()
+        {
+            Farm result;
+            try
+            {
+                result = _farmService.GetDetails(HttpContext);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result);
+        }
     }
 }
