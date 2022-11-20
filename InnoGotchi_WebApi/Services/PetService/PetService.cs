@@ -28,6 +28,11 @@ namespace InnoGotchi_WebApi.Services.PetService
                 throw new Exception("You don't have a farm.");
             }
 
+            if (_db.Pets.Any(p => p.Name == request.Name))
+            {
+                throw new Exception("This name is already taken.");
+            }
+
             Pet pet = _mapper.Map<Pet>(request);
             pet.Farm = farm;
 

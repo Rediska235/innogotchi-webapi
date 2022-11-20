@@ -27,6 +27,11 @@ namespace InnoGotchi_WebApi.Services.FarmService
                 throw new Exception("You already have a farm.");
             }
 
+            if (_db.Farms.Any(f => f.Name == request.Name))
+            {
+                throw new Exception("This name is already taken.");
+            }
+
             Farm farm = _mapper.Map<Farm>(request);
             farm.User = user;
 

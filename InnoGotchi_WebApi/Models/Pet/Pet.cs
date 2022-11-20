@@ -21,5 +21,10 @@ namespace InnoGotchi_WebApi.Models.Pet
         public int Hunger { get; set; }
         public int Thirsty { get; set; }
         public int HappinessDays { get; set; }
+        public bool isAlive { get; set; } = true;
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime LastFed { get; set; } = DateTime.Now;
+        public DateTime LastDrank { get; set; } = DateTime.Now;
     }
 }

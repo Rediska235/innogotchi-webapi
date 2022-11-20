@@ -10,6 +10,8 @@ namespace InnoGotchi_WebApi.Models.Farm
         [MaxLength(20)]
         public string Name { get; set; } = "";
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         [JsonIgnore]
         public int UserId { get; set; }
 
