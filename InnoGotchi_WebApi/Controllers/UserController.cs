@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using InnoGotchi_WebApi.Data;
-using InnoGotchi_WebApi.Models.User;
+﻿using InnoGotchi_WebApi.Models.User;
+using InnoGotchi_WebApi.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace InnoGotchi_WebApi.Controllers
 {
@@ -13,131 +9,71 @@ namespace InnoGotchi_WebApi.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public UserController(IConfiguration configuration, AppDbContext db, IMapper mapper)
+        public UserController(IUserService userService)
         {
-            _configuration = configuration;
-            _db = db;
-            _mapper = mapper;
+            _userService = userService;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserRegisterDto request)
         {
-            var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);
-
-            if(user != null)
+            User result;
+            try
             {
-                return BadRequest("The user with this email already exists.");
+                result = _userService.Register(request);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
-            user = _mapper.Map<User>(request);
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-            
-            _db.Add(user);
-            _db.SaveChanges();
-
-            return Ok(user);
+            return Ok(result);
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserLoginDto request)
         {
-            var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);
-
-            if (user == null)
+            string result;
+            try
             {
-                return BadRequest("User not found.");
+                result = _userService.Login(request);
             }
-
-            bool isValidPassword = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
-            if (!isValidPassword)
+            catch (Exception e)
             {
-                return BadRequest("Wrong password.");
+                return BadRequest(e.Message);
             }
-
-            string token = CreateToken(user);
-            return Ok(token);
+            
+            return Ok(result);
         }
-
-        private string CreateToken(User user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim(ClaimTypes.Email, user.Email),
-            };
-
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("JWT:Key").Value));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
-        }
-
 
         [HttpGet("getDetails"), Authorize]
         public async Task<ActionResult<User>> GetDetails()
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            return Ok(user);
+            return Ok(_userService.GetDetails(HttpContext));
         }
 
-        [HttpPost("changePassword"), Authorize]
+        [HttpPut("changePassword"), Authorize]
         public async Task<ActionResult<User>> ChangePassword(ChangePasswordDto input)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            bool isValidPassword = BCrypt.Net.BCrypt.Verify(input.OldPassword, user.PasswordHash);
-            if (!isValidPassword)
+            User result;
+            try
             {
-                return BadRequest("Wrong old password.");
+                result = _userService.ChangePassword(HttpContext, input);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
 
-            if (input.NewPassword != input.ConfirmNewPassword)
-            {
-                return BadRequest("Passwords do not match.");
-            }
-
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(input.NewPassword);
-
-            _db.Update(user);
-            _db.SaveChanges();
-
-            return Ok(user);
+            return Ok(result);
         }
         
-        [HttpPost("changeUsername"), Authorize]
+        [HttpPut("changeUsername"), Authorize]
         public async Task<ActionResult<User>> ChangeUsername(ChangeUsernameDto input)
         {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            user.FirstName = input.FirstName;
-            user.LastName = input.LastName;
-
-            _db.Update(user);
-            _db.SaveChanges();
-
-            return Ok(user);
+            return Ok(_userService.ChangeUsername(HttpContext, input));
         }
     }
 }
