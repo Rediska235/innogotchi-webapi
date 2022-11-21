@@ -22,7 +22,7 @@ namespace InnoGotchi_WebApi.Models.PetModels
         public HungerLevel Hunger { get; set; }
         public ThirstLevel Thirst { get; set; }
         public int HappinessDays { get; set; }
-        public bool isAlive { get; set; } = true;
+        public bool IsAlive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastFed { get; set; } = DateTime.Now;
@@ -60,7 +60,7 @@ namespace InnoGotchi_WebApi.Models.PetModels
             else
             {
                 Hunger = HungerLevel.Dead;
-                isAlive = false;
+                IsAlive = false;
             }
 
 
@@ -80,7 +80,7 @@ namespace InnoGotchi_WebApi.Models.PetModels
             else
             {
                 Thirst = ThirstLevel.Dead;
-                isAlive = false;
+                IsAlive = false;
             }
 
 

@@ -41,11 +41,24 @@ namespace InnoGotchi_WebApi.Services.FarmService
             return farm;
         }
 
-        public Farm GetDetails(HttpContext httpContext)
+        public FarmDetailsDto GetDetails(HttpContext httpContext)
         {
             var farm = GetFarmByContext(httpContext);
 
-            return farm;
+            int petCount = _db.Pets.Count(p => p.Farm.Id == farm.Id);
+            int aliveCount = _db.Pets.Count(p => p.Farm.Id == farm.Id && p.IsAlive);
+            int deadCount = petCount - aliveCount;
+
+            FarmDetailsDto result = new FarmDetailsDto
+            {
+                Name = farm.Name,
+                CreatedAt = farm.CreatedAt,
+                PetCount = petCount,
+                AliveCount = aliveCount,
+                DeadCount = deadCount
+            };
+
+            return result;
         }
 
         public List<Farm> GetFriendsFarms(HttpContext httpContext)

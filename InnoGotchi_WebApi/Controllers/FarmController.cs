@@ -34,9 +34,9 @@ namespace InnoGotchi_WebApi.Controllers
         }
 
         [HttpGet("getDetails"), Authorize]
-        public async Task<ActionResult<Farm>> GetDetails()
+        public async Task<ActionResult<FarmDetailsDto>> GetDetails()
         {
-            Farm result;
+            FarmDetailsDto result;
             try
             {
                 result = _farmService.GetDetails(HttpContext);
