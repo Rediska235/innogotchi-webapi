@@ -42,10 +42,14 @@ namespace InnoGotchi_WebApi.Models.PetModels
 
         private const int DAYS_TO_PET_YEARS = 1;
         
-        private void SetVitalSigns()
+        public void SetVitalSigns()
         {
             double hungerDifference = (DateTime.Now - LastFed).TotalDays;
-            if (hungerDifference >= F_NORMAL_LIMIT && hungerDifference < F_HUNGER_LIMIT)
+            if (hungerDifference < F_NORMAL_LIMIT)
+            {
+                Hunger = HungerLevel.Full;
+            }
+            else if (hungerDifference >= F_NORMAL_LIMIT && hungerDifference < F_HUNGER_LIMIT)
             {
                 Hunger = HungerLevel.Normal;
             }
@@ -53,7 +57,7 @@ namespace InnoGotchi_WebApi.Models.PetModels
             {
                 Hunger = HungerLevel.Hungry;
             }
-            else if (hungerDifference >= F_DEAD_LIMIT)
+            else
             {
                 Hunger = HungerLevel.Dead;
                 isAlive = false;
@@ -61,7 +65,11 @@ namespace InnoGotchi_WebApi.Models.PetModels
 
 
             double thirstDifference = (DateTime.Now - LastDrank).TotalDays;
-            if (thirstDifference >= D_NORMAL_LIMIT && thirstDifference < D_THIRST_LIMIT)
+            if(thirstDifference < D_NORMAL_LIMIT)
+            {
+                Thirst = ThirstLevel.Full;
+            }
+            else if (thirstDifference >= D_NORMAL_LIMIT && thirstDifference < D_THIRST_LIMIT)
             {
                 Thirst = ThirstLevel.Normal;
             }
@@ -69,11 +77,12 @@ namespace InnoGotchi_WebApi.Models.PetModels
             {
                 Thirst = ThirstLevel.Thirsty;
             }
-            else if (thirstDifference >= D_DEAD_LIMIT)
+            else
             {
                 Thirst = ThirstLevel.Dead;
                 isAlive = false;
             }
+
 
             Age = (int)(DateTime.Now - CreatedAt).TotalDays / DAYS_TO_PET_YEARS;
         }

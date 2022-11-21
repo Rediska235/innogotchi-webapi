@@ -73,9 +73,10 @@ namespace InnoGotchi_WebApi.Services.PetService
             {
                 throw new Exception("Pet not found.");
             }
-
-            pet.LastFed = DateTime.Now;
             
+            pet.LastFed = DateTime.Now;
+            pet.SetVitalSigns();
+
             _db.Update(pet);
             _db.SaveChanges();
 
@@ -91,7 +92,8 @@ namespace InnoGotchi_WebApi.Services.PetService
             }
             
             pet.LastDrank = DateTime.Now;
-            
+            pet.SetVitalSigns();
+
             _db.Update(pet);
             _db.SaveChanges();
             
