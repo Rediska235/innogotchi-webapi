@@ -1,4 +1,4 @@
-﻿using InnoGotchi_WebApi.Models.Pet;
+﻿using InnoGotchi_WebApi.Models.PetModels;
 
 namespace InnoGotchi_WebApi.Services.PetService
 {

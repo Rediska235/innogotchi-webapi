@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InnoGotchi_WebApi.Models.Pet
+namespace InnoGotchi_WebApi.Models.PetModels
 {
     public class PetCreateDto
     {

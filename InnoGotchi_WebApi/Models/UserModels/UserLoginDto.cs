@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InnoGotchi_WebApi.Models.User
+namespace InnoGotchi_WebApi.Models.UserModels
 {
     public class UserLoginDto
     {

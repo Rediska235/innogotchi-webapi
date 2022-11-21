@@ -1,4 +1,4 @@
-﻿namespace InnoGotchi_WebApi.Models.Farm
+﻿namespace InnoGotchi_WebApi.Models.FarmModels
 {
     public class FarmCreateDto
     {

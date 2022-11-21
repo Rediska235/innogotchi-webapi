@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using InnoGotchi_WebApi.Models.FarmModels;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace InnoGotchi_WebApi.Models.User
+namespace InnoGotchi_WebApi.Models.UserModels
 {
     public class User
     {
@@ -23,6 +24,6 @@ namespace InnoGotchi_WebApi.Models.User
         public string? PasswordHash { get; set; }
 
         [JsonIgnore]
-        public Farm.Farm Farm { get; set; }
+        public Farm Farm { get; set; }
     }
 }

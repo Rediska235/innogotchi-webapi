@@ -1,4 +1,4 @@
-﻿using InnoGotchi_WebApi.Models.User;
+﻿using InnoGotchi_WebApi.Models.UserModels;
 using InnoGotchi_WebApi.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

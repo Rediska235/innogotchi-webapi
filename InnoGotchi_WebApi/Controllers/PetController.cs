@@ -1,4 +1,4 @@
-﻿using InnoGotchi_WebApi.Models.Pet;
+﻿using InnoGotchi_WebApi.Models.PetModels;
 using InnoGotchi_WebApi.Services.PetService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -71,7 +71,7 @@ namespace InnoGotchi_WebApi.Controllers
             return Ok(pet);
         }
 
-        [HttpPut("giveFood/{id}"), Authorize]
+        [HttpPut("giveWater/{id}"), Authorize]
         public async Task<ActionResult<Pet>> GiveWater(int id)
         {
             Pet pet;

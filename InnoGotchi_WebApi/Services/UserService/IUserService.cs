@@ -1,4 +1,4 @@
-﻿using InnoGotchi_WebApi.Models.User;
+﻿using InnoGotchi_WebApi.Models.UserModels;
 
 namespace InnoGotchi_WebApi.Services.UserService
 {

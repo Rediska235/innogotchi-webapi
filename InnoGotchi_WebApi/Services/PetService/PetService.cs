@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using InnoGotchi_WebApi.Data;
-using InnoGotchi_WebApi.Models.Pet;
+using InnoGotchi_WebApi.Models.PetModels;
 using System.Security.Claims;
 
 namespace InnoGotchi_WebApi.Services.PetService
@@ -50,12 +50,20 @@ namespace InnoGotchi_WebApi.Services.PetService
                 throw new Exception("Pet not found.");
             }
 
+            pet.SetVitalSigns();
+
             return pet;
         }
 
         public List<Pet> GetAllPets()
         {
-            return _db.Pets.ToList();
+            var pets = _db.Pets.OrderBy(p => p.HappinessDays).ToList();
+            foreach(Pet pet in pets)
+            {
+                pet.SetVitalSigns();
+            }
+            
+            return pets;
         }
 
         public Pet GiveFood(int id)
@@ -66,7 +74,8 @@ namespace InnoGotchi_WebApi.Services.PetService
                 throw new Exception("Pet not found.");
             }
 
-            pet.Hunger = 0;
+            pet.LastFed = DateTime.Now;
+            
             _db.Update(pet);
             _db.SaveChanges();
 
@@ -80,11 +89,12 @@ namespace InnoGotchi_WebApi.Services.PetService
             {
                 throw new Exception("Pet not found.");
             }
-
-            pet.Thirsty = 0;
+            
+            pet.LastDrank = DateTime.Now;
+            
             _db.Update(pet);
             _db.SaveChanges();
-
+            
             return pet;
         }
     }

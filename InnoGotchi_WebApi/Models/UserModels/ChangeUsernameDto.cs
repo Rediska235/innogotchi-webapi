@@ -1,4 +1,4 @@
-﻿namespace InnoGotchi_WebApi.Models.User
+﻿namespace InnoGotchi_WebApi.Models.UserModels
 {
     public class ChangeUsernameDto
     {

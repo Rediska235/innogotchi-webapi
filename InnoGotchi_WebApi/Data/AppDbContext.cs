@@ -1,6 +1,6 @@
-﻿using InnoGotchi_WebApi.Models.User;
-using InnoGotchi_WebApi.Models.Farm;
-using InnoGotchi_WebApi.Models.Pet;
+﻿using InnoGotchi_WebApi.Models.UserModels;
+using InnoGotchi_WebApi.Models.FarmModels;
+using InnoGotchi_WebApi.Models.PetModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchi_WebApi.Data

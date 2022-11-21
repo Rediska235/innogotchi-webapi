@@ -1,8 +1,8 @@
-﻿using InnoGotchi_WebApi.Models.Farm;
+﻿using InnoGotchi_WebApi.Models.FarmModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using InnoGotchi_WebApi.Services.FarmService;
-using InnoGotchi_WebApi.Models.Pet;
+using InnoGotchi_WebApi.Models.PetModels;
 
 namespace InnoGotchi_WebApi.Controllers
 {

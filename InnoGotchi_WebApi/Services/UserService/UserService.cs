@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using InnoGotchi_WebApi.Data;
-using InnoGotchi_WebApi.Models.User;
+using InnoGotchi_WebApi.Models.UserModels;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

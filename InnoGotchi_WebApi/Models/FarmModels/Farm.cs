@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using InnoGotchi_WebApi.Models.UserModels;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace InnoGotchi_WebApi.Models.Farm
+namespace InnoGotchi_WebApi.Models.FarmModels
 {
     public class Farm
     {
@@ -14,8 +15,8 @@ namespace InnoGotchi_WebApi.Models.Farm
 
         [JsonIgnore]
         public int UserId { get; set; }
-
+        
         [JsonIgnore]
-        public User.User? User { get; set; }
+        public User? User { get; set; }
     }
 }
