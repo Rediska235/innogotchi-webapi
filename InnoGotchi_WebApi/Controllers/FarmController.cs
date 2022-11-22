@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using InnoGotchi_WebApi.Services.FarmService;
 using InnoGotchi_WebApi.Models.PetModels;
+using InnoGotchi_WebApi.Models.UserModels;
 
 namespace InnoGotchi_WebApi.Controllers
 {
@@ -56,6 +57,38 @@ namespace InnoGotchi_WebApi.Controllers
             try
             {
                 result = _farmService.GetPets(HttpContext);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("addFriend"), Authorize]
+        public async Task<ActionResult<User>> AddFriend(string email)
+        {
+            User result;
+            try
+            {
+                result = _farmService.AddFriend(HttpContext, email);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("getFriendsFarms"), Authorize]
+        public async Task<ActionResult<List<Farm>>> GetFriendsFarms()
+        {
+            List<Farm> result;
+            try
+            {
+                result = _farmService.GetFriendsFarms(HttpContext);
             }
             catch (Exception e)
             {

@@ -10,6 +10,6 @@ namespace InnoGotchi_WebApi.Services.FarmService
         FarmDetailsDto GetDetails(HttpContext httpContext);
         List<Pet> GetPets(HttpContext httpContext);
         List<Farm> GetFriendsFarms(HttpContext httpContext);
-        User AddFriend(HttpContext httpContext);
+        User AddFriend(HttpContext httpContext, string email);
     }
 }

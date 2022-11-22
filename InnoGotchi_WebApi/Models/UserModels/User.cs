@@ -1,4 +1,5 @@
-﻿using InnoGotchi_WebApi.Models.FarmModels;
+﻿using InnoGotchi_WebApi.Data;
+using InnoGotchi_WebApi.Models.FarmModels;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -24,6 +25,9 @@ namespace InnoGotchi_WebApi.Models.UserModels
         public string? PasswordHash { get; set; }
 
         [JsonIgnore]
-        public Farm Farm { get; set; }
+        public Farm? Farm { get; set; }
+
+        [JsonIgnore]
+        public List<FriendFarm> FriendsFarms { get; set; }
     }
 }

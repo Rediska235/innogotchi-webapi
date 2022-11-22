@@ -14,9 +14,12 @@ namespace InnoGotchi_WebApi.Models.FarmModels
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [JsonIgnore]
-        public int UserId { get; set; }
+        public User? User { get; set; }
         
         [JsonIgnore]
-        public User? User { get; set; }
+        public int UserId { get; set; }
+       
+        [JsonIgnore]
+        public List<FriendFarm> Friends { get; set; } 
     }
 }

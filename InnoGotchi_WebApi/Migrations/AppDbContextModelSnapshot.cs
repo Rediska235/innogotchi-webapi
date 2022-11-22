@@ -22,7 +22,7 @@ namespace InnoGotchi_WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.Farm.Farm", b =>
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.FarmModels.Farm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -49,7 +49,22 @@ namespace InnoGotchi_WebApi.Migrations
                     b.ToTable("Farms");
                 });
 
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.Pet.Pet", b =>
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.FriendFarm", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FarmId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "FarmId");
+
+                    b.HasIndex("FarmId");
+
+                    b.ToTable("FriendFarms");
+                });
+
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.PetModels.Pet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,6 +93,9 @@ namespace InnoGotchi_WebApi.Migrations
                     b.Property<int>("Hunger")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAlive")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastDrank")
                         .HasColumnType("datetime2");
 
@@ -98,9 +116,6 @@ namespace InnoGotchi_WebApi.Migrations
                     b.Property<int>("Thirst")
                         .HasColumnType("int");
 
-                    b.Property<bool>("isAlive")
-                        .HasColumnType("bit");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FarmId");
@@ -108,7 +123,7 @@ namespace InnoGotchi_WebApi.Migrations
                     b.ToTable("Pets");
                 });
 
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.User.User", b =>
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.UserModels.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -140,20 +155,39 @@ namespace InnoGotchi_WebApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.Farm.Farm", b =>
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.FarmModels.Farm", b =>
                 {
-                    b.HasOne("InnoGotchi_WebApi.Models.User.User", "User")
+                    b.HasOne("InnoGotchi_WebApi.Models.UserModels.User", "User")
                         .WithOne("Farm")
-                        .HasForeignKey("InnoGotchi_WebApi.Models.Farm.Farm", "UserId")
+                        .HasForeignKey("InnoGotchi_WebApi.Models.FarmModels.Farm", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.Pet.Pet", b =>
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.FriendFarm", b =>
                 {
-                    b.HasOne("InnoGotchi_WebApi.Models.Farm.Farm", "Farm")
+                    b.HasOne("InnoGotchi_WebApi.Models.FarmModels.Farm", "Farm")
+                        .WithMany("Friends")
+                        .HasForeignKey("FarmId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InnoGotchi_WebApi.Models.UserModels.User", "User")
+                        .WithMany("FriendsFarms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Farm");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.PetModels.Pet", b =>
+                {
+                    b.HasOne("InnoGotchi_WebApi.Models.FarmModels.Farm", "Farm")
                         .WithMany()
                         .HasForeignKey("FarmId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -162,10 +196,16 @@ namespace InnoGotchi_WebApi.Migrations
                     b.Navigation("Farm");
                 });
 
-            modelBuilder.Entity("InnoGotchi_WebApi.Models.User.User", b =>
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.FarmModels.Farm", b =>
                 {
-                    b.Navigation("Farm")
-                        .IsRequired();
+                    b.Navigation("Friends");
+                });
+
+            modelBuilder.Entity("InnoGotchi_WebApi.Models.UserModels.User", b =>
+                {
+                    b.Navigation("Farm");
+
+                    b.Navigation("FriendsFarms");
                 });
 #pragma warning restore 612, 618
         }

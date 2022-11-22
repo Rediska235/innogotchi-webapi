@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InnoGotchi_WebApi.Data;
+using InnoGotchi_WebApi.Models;
 using InnoGotchi_WebApi.Models.FarmModels;
 using InnoGotchi_WebApi.Models.PetModels;
 using InnoGotchi_WebApi.Models.UserModels;
@@ -61,11 +62,6 @@ namespace InnoGotchi_WebApi.Services.FarmService
             return result;
         }
 
-        public List<Farm> GetFriendsFarms(HttpContext httpContext)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<Pet> GetPets(HttpContext httpContext)
         {
             var farm = GetFarmByContext(httpContext);
@@ -73,9 +69,36 @@ namespace InnoGotchi_WebApi.Services.FarmService
             return _db.Pets.Where(p => p.Farm.Id == farm.Id).ToList();
         }
 
-        public User AddFriend(HttpContext httpContext)
+        public User AddFriend(HttpContext httpContext, string email)
         {
-            throw new NotImplementedException();
+            var farm = GetFarmByContext(httpContext);
+
+            var friend = _db.Users.FirstOrDefault(u => u.Email == email);
+
+            if (friend == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            if (_db.FriendFarms.Any(ff => ff.FarmId == farm.Id && ff.UserId == friend.Id))
+            {
+                throw new Exception("You are already friends with this user.");
+            }
+
+            _db.FriendFarms.Add(new FriendFarm
+            {
+                User = friend,
+                Farm = farm
+            });
+            _db.SaveChanges();
+
+            return friend;
+        }
+
+        public List<Farm> GetFriendsFarms(HttpContext httpContext)
+        {
+            var user = GetUserByContext(httpContext);
+            return _db.FriendFarms.Where(ff => ff.UserId == user.Id).Select(ff => ff.Farm).ToList();
         }
 
         private Farm GetFarmByContext(HttpContext httpContext)
