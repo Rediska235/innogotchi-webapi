@@ -5,10 +5,11 @@ namespace InnoGotchi_WebApi.Services.PetService
     public interface IPetService
     {
         Pet CreatePet(HttpContext httpContext, PetCreateDto request);
-        Pet GetDetails(int id);
+        Pet ChangeName(HttpContext httpContext, PetChangeNameDto request);
+        Pet GetDetails(HttpContext httpContext, int id);
         List<Pet> GetAllPets();
 
-        Pet GiveFood(int id);
-        Pet GiveWater(int id);
+        Pet GiveFood(HttpContext httpContext, int id);
+        Pet GiveWater(HttpContext httpContext, int id);
     }
 }

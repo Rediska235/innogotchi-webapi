@@ -1,6 +1,7 @@
 ﻿using InnoGotchi_WebApi.Models.PetModels;
 using InnoGotchi_WebApi.Services.PetService;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi_WebApi.Controllers
@@ -28,10 +29,26 @@ namespace InnoGotchi_WebApi.Controllers
             {
                 return BadRequest(e.Message);
             }
-            
+
             return Ok(pet);
         }
-       
+        
+        [HttpPost("changeName")]
+        public async Task<ActionResult<Pet>> ChangeName(PetChangeNameDto request)
+        {
+            Pet pet;
+            try
+            {
+                pet = _petService.ChangeName(HttpContext, request);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(pet);
+        }
+
 
         [HttpGet("getDetails/{id}"), Authorize]
         public async Task<ActionResult<Pet>> GetDetails(int id)
@@ -39,7 +56,7 @@ namespace InnoGotchi_WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.GetDetails(id);
+                pet = _petService.GetDetails(HttpContext, id);
             }
             catch (Exception e)
             {
@@ -61,7 +78,7 @@ namespace InnoGotchi_WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.GiveFood(id);
+                pet = _petService.GiveFood(HttpContext, id);
             }
             catch (Exception e)
             {
@@ -77,7 +94,7 @@ namespace InnoGotchi_WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.GiveWater(id);
+                pet = _petService.GiveWater(HttpContext, id);
             }
             catch (Exception e)
             {

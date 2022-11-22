@@ -42,12 +42,33 @@ namespace InnoGotchi_WebApi.Services.PetService
             return pet;
         }
 
-        public Pet GetDetails(int id)
+        public Pet ChangeName(HttpContext httpContext, PetChangeNameDto request)
+        {
+            Pet pet = _db.Pets.FirstOrDefault(p => p.Id == request.Id);
+            if (!IsMyPet(pet))
+            {
+                throw new Exception("This is not your pet.");
+            }
+            
+            pet.Name = request.Name;
+
+            _db.Update(pet);
+            _db.SaveChanges();
+
+            return pet;
+        }
+
+        public Pet GetDetails(HttpContext httpContext, int id)
         {
             Pet pet = _db.Pets.FirstOrDefault(p => p.Id == id);
             if (pet == null)
             {
                 throw new Exception("Pet not found.");
+            }
+
+            if (!IsMyPet(pet))
+            {
+                throw new Exception("This is not your pet.");
             }
 
             pet.SetVitalSigns();
@@ -65,15 +86,25 @@ namespace InnoGotchi_WebApi.Services.PetService
             
             return pets;
         }
-
-        public Pet GiveFood(int id)
+        
+        public Pet GiveFood(HttpContext httpContext, int id)
         {
             Pet pet = _db.Pets.FirstOrDefault(p => p.Id == id);
             if (pet == null)
             {
                 throw new Exception("Pet not found.");
             }
+
+            if (!IsMyPet(pet))
+            {
+                throw new Exception("This is not your pet.");
+            }
             
+            if (!pet.IsAlive)
+            {
+                throw new Exception("Your pet is dead.");
+            }
+
             pet.LastFed = DateTime.Now;
             pet.SetVitalSigns();
 
@@ -82,8 +113,8 @@ namespace InnoGotchi_WebApi.Services.PetService
 
             return pet;
         }
-
-        public Pet GiveWater(int id)
+        
+        public Pet GiveWater(HttpContext httpContext, int id)
         {
             Pet pet = _db.Pets.FirstOrDefault(p => p.Id == id);
             if (pet == null)
@@ -91,6 +122,16 @@ namespace InnoGotchi_WebApi.Services.PetService
                 throw new Exception("Pet not found.");
             }
             
+            if (!IsMyPet(pet))
+            {
+                throw new Exception("This is not your pet.");
+            }
+            
+            if (!pet.IsAlive)
+            {
+                throw new Exception("Your pet is dead.");
+            }
+
             pet.LastDrank = DateTime.Now;
             pet.SetVitalSigns();
 
@@ -98,6 +139,11 @@ namespace InnoGotchi_WebApi.Services.PetService
             _db.SaveChanges();
             
             return pet;
+        }
+        
+        private bool IsMyPet(Pet pet)
+        {
+            return pet.Farm != null;
         }
     }
 }

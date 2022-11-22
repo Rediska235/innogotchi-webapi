@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InnoGotchi_WebApi.Data;
+using InnoGotchi_WebApi.Migrations;
 using InnoGotchi_WebApi.Models;
 using InnoGotchi_WebApi.Models.FarmModels;
 using InnoGotchi_WebApi.Models.PetModels;
@@ -39,6 +40,17 @@ namespace InnoGotchi_WebApi.Services.FarmService
             _db.Add(farm);
             _db.SaveChanges();
             
+            return farm;
+        }
+
+        public Farm ChangeName(HttpContext httpContext, FarmCreateDto request)
+        {
+            var farm = GetFarmByContext(httpContext);
+            farm.Name = request.Name;
+
+            _db.Update(farm);
+            _db.SaveChanges();
+
             return farm;
         }
 

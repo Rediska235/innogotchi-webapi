@@ -33,6 +33,22 @@ namespace InnoGotchi_WebApi.Controllers
 
             return Ok(result);
         }
+        
+        [HttpPost("changeName"), Authorize]
+        public async Task<ActionResult<Farm>> ChangeName(FarmCreateDto request)
+        {
+            Farm result;
+            try
+            {
+                result = _farmService.ChangeName(HttpContext, request);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Ok(result);
+        }
 
         [HttpGet("getDetails"), Authorize]
         public async Task<ActionResult<FarmDetailsDto>> GetDetails()
