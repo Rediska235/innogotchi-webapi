@@ -1,22 +1,28 @@
 ﻿using InnoGotchi_WebApi.Models.FarmModels;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace InnoGotchi_WebApi.Models.PetModels
 {
     public class Pet
     {
         public int Id { get; set; }
-
-        [Required]
+        
         [MaxLength(20)]
         public string Name { get; set; } = "";
 
+        [JsonIgnore]
         public int? FarmId { get; set; }
         public Farm Farm { get; set; }
-        
-        public int Eyes { get; set; }        
+
+        // JsonIgnore for now
+        [JsonIgnore]
+        public int Eyes { get; set; }
+        [JsonIgnore]
         public int Nose { get; set; }
+        [JsonIgnore]
         public int Mouth { get; set; }
+        [JsonIgnore]
         public int Ears { get; set; }
         
         public int Age { get; set; }
@@ -28,6 +34,7 @@ namespace InnoGotchi_WebApi.Models.PetModels
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastFed { get; set; } = DateTime.Now;
         public DateTime LastDrank { get; set; } = DateTime.Now;
+        public DateTime HappinessDaysStart { get; set; } = DateTime.Now;
 
         // F - for food
         private const int F_NORMAL_LIMIT = 1;
@@ -81,9 +88,18 @@ namespace InnoGotchi_WebApi.Models.PetModels
                 Thirst = ThirstLevel.Dead;
                 IsAlive = false;
             }
-
-
+            
             Age = (int)(DateTime.Now - CreatedAt).TotalDays / DAYS_TO_PET_YEARS;
+
+            if (Thirst >= ThirstLevel.Normal && Hunger >= HungerLevel.Normal)
+            {
+                HappinessDays = (int)(DateTime.Now - HappinessDaysStart).TotalDays;
+            }
+            else
+            {
+                HappinessDays = 0;
+                HappinessDaysStart = DateTime.Now;
+            }
         }
     }
 }

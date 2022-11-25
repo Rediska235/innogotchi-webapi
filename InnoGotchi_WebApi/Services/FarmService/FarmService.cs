@@ -4,21 +4,18 @@ using InnoGotchi_WebApi.Models;
 using InnoGotchi_WebApi.Models.FarmModels;
 using InnoGotchi_WebApi.Models.PetModels;
 using InnoGotchi_WebApi.Models.UserModels;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace InnoGotchi_WebApi.Services.FarmService
 {
     public class FarmService : IFarmService
     {
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
-
-        Exception dontHaveFarm = new Exception("You don't have a farm.");
         Exception takenName = new Exception("This name is already taken.");
         Exception alreadyHaveFarm = new Exception("You already have a farm.");
         Exception userNotFound = new Exception("User not found.");
         Exception alreadyFrinds = new Exception("You are already friends with this user.");
+        
+        private readonly AppDbContext _db;
+        private readonly IMapper _mapper;
 
         public FarmService(AppDbContext db, IMapper mapper)
         {
@@ -28,7 +25,7 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public Farm CreateFarm(HttpContext httpContext, FarmCreateDto request)
         {
-            var user = GetUserByContext(httpContext);
+            var user = Utils.GetUserByContext(_db, httpContext);
 
             if (_db.Farms.Any(f => f.UserId == user.Id))
             {
@@ -40,7 +37,7 @@ namespace InnoGotchi_WebApi.Services.FarmService
                 throw takenName;
             }
 
-            Farm farm = _mapper.Map<Farm>(request);
+            var farm = _mapper.Map<Farm>(request);
             farm.User = user;
 
             _db.Add(farm);
@@ -51,7 +48,7 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public Farm ChangeName(HttpContext httpContext, FarmCreateDto request)
         {
-            var farm = GetFarmByContext(httpContext);
+            var farm = Utils.GetFarmByContext(_db, httpContext);
             farm.Name = request.Name;
 
             _db.Update(farm);
@@ -62,7 +59,7 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public FarmDetailsDto GetDetails(HttpContext httpContext)
         {
-            var farm = GetFarmByContext(httpContext);
+            var farm = Utils.GetFarmByContext(_db, httpContext);
 
             int petCount = farm.Pets.Count();
             int aliveCount = farm.Pets.Count(p => p.IsAlive);
@@ -82,23 +79,22 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public List<Pet> GetPets(HttpContext httpContext)
         {
-            var farm = GetFarmByContext(httpContext);
+            var farm = Utils.GetFarmByContext(_db, httpContext);
             
             return farm.Pets;
         }
 
         public User AddFriend(HttpContext httpContext, string email)
         {
-            var farm = GetFarmByContext(httpContext);
+            var farm = Utils.GetFarmByContext(_db, httpContext);
 
             var friend = _db.Users.FirstOrDefault(u => u.Email == email);
-
             if (friend == null)
             {
                 throw userNotFound;
             }
-
-            if (_db.FriendFarms.Any(ff => ff.FarmId == farm.Id && ff.UserId == friend.Id))
+            
+            if (farm.Friends.Any(ff => ff.UserId == friend.Id))
             {
                 throw alreadyFrinds;
             }
@@ -115,29 +111,9 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
         public List<Farm> GetFriendsFarms(HttpContext httpContext)
         {
-            var user = GetUserByContext(httpContext);
-            return _db.FriendFarms.Where(ff => ff.UserId == user.Id).Select(ff => ff.Farm).ToList();
-        }
+            var user = Utils.GetUserByContext(_db, httpContext);
 
-        private Farm GetFarmByContext(HttpContext httpContext)
-        {
-            var user = GetUserByContext(httpContext);
-
-            var farm = _db.Farms.Include(f => f.Pets).FirstOrDefault(f => f.UserId == user.Id);
-            if (farm == null)
-            {
-                throw dontHaveFarm;
-            }
-
-            return farm;
-        }
-        private User GetUserByContext(HttpContext httpContext)
-        {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            return user;
+            return user.FriendsFarms.Select(ff => ff.Farm).ToList();
         }
     }
 }

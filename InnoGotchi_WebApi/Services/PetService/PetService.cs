@@ -2,20 +2,18 @@
 using InnoGotchi_WebApi.Data;
 using InnoGotchi_WebApi.Models.PetModels;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace InnoGotchi_WebApi.Services.PetService
 {
     public class PetService : IPetService
     {
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
-
         Exception dontHaveFarm = new Exception("You don't have a farm.");
         Exception takenName = new Exception("This name is already taken.");
-        Exception petNotFound = new Exception("Pet not found.");
         Exception notYourPet = new Exception("You cannot interact with this pet.");
         Exception deadPet = new Exception("Your pet is dead.");
+
+        private readonly AppDbContext _db;
+        private readonly IMapper _mapper;
 
         public PetService(AppDbContext context, IMapper mapper)
         {
@@ -25,11 +23,7 @@ namespace InnoGotchi_WebApi.Services.PetService
 
         public Pet CreatePet(HttpContext httpContext, PetCreateDto request)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            var farm = _db.Farms.FirstOrDefault(f => f.UserId == user.Id);
+            var farm = Utils.GetFarmByContext(_db, httpContext);
             if (farm == null)
             {
                 throw dontHaveFarm;
@@ -40,30 +34,26 @@ namespace InnoGotchi_WebApi.Services.PetService
                 throw takenName;
             }
 
-            Pet pet = _mapper.Map<Pet>(request);
+            var pet = _mapper.Map<Pet>(request);
             pet.Farm = farm;
 
             _db.Add(pet);
             _db.SaveChanges();
-
-            Console.WriteLine("Pet created: " + pet.Name);
-            foreach (var p in farm.Pets)
-            {
-                Console.WriteLine(p.Name);
-            }
 
             return pet;
         }
 
         public Pet ChangeName(HttpContext httpContext, PetChangeNameDto request)
         {
-            Pet pet = GetPetById(request.Id);
+            var pet = Utils.GetPetById(_db, request.Id);
+            
             if (!IsMyOrFriendsPet(httpContext, pet))
             {
                 throw notYourPet;
             }
             
             pet.Name = request.Name;
+            pet.SetVitalSigns();
 
             _db.Update(pet);
             _db.SaveChanges();
@@ -73,12 +63,8 @@ namespace InnoGotchi_WebApi.Services.PetService
 
         public Pet GetDetails(HttpContext httpContext, int id)
         {
-            Pet pet = GetPetById(id);
-            if (pet == null)
-            {
-                throw petNotFound;
-            }
-
+            var pet = Utils.GetPetById(_db, id);
+            
             if (!IsMyOrFriendsPet(httpContext, pet))
             {
                 throw notYourPet;
@@ -88,11 +74,15 @@ namespace InnoGotchi_WebApi.Services.PetService
 
             return pet;
         }
-
+        
         public List<Pet> GetAllPets()
         {
-            var pets = _db.Pets.OrderBy(p => p.HappinessDays).ToList();
-            foreach(Pet pet in pets)
+            var pets = _db.Pets
+                .Include(p => p.Farm)
+                .OrderBy(p => p.HappinessDays)
+                .ToList();
+            
+            foreach(var pet in pets)
             {
                 pet.SetVitalSigns();
             }
@@ -102,11 +92,7 @@ namespace InnoGotchi_WebApi.Services.PetService
         
         public Pet GiveFood(HttpContext httpContext, int id)
         {
-            Pet pet = GetPetById(id);
-            if (pet == null)
-            {
-                throw petNotFound;
-            }
+            var pet = Utils.GetPetById(_db, id);
 
             if (!IsMyOrFriendsPet(httpContext, pet))
             {
@@ -129,11 +115,7 @@ namespace InnoGotchi_WebApi.Services.PetService
         
         public Pet GiveWater(HttpContext httpContext, int id)
         {
-            Pet pet = GetPetById(id);
-            if (pet == null)
-            {
-                throw petNotFound;
-            }
+            var pet = Utils.GetPetById(_db, id);
             
             if (!IsMyOrFriendsPet(httpContext, pet))
             {
@@ -156,28 +138,22 @@ namespace InnoGotchi_WebApi.Services.PetService
         
         private bool IsMyOrFriendsPet(HttpContext httpContext, Pet pet)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            if (pet.Farm.UserId == user.Id)
-            {
-                return true;
-            }
-
-            var friendsFarms = _db.FriendFarms.Where(ff => ff.UserId == user.Id).Select(ff => ff.Farm).ToList();
-            if (friendsFarms.Any(f => f.Id == pet.Farm.Id))
+            var user = Utils.GetUserByContext(_db, httpContext);
+            var farm = Utils.GetFarmByContext(_db, httpContext);
+            
+            if (farm.Pets.Contains(pet))
             {
                 return true;
             }
             
-            return false;
-        }
+            var friendsFarms = user.FriendsFarms.Select(ff => ff.Farm).ToList();
+            
+            if (friendsFarms.Any(f => f.Pets.Contains(pet)))
+            {
+                return true;
+            }
 
-        private Pet GetPetById(int id)
-        {
-            //проверить с Include(p => p.Farm);
-            return _db.Pets.Include(p => p.Farm).FirstOrDefault(p => p.Id == id);
+            return false;
         }
     }
 }

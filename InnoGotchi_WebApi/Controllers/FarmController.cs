@@ -83,7 +83,7 @@ namespace InnoGotchi_WebApi.Controllers
         }
 
         [HttpPost("addFriend"), Authorize]
-        public async Task<ActionResult<User>> AddFriend(string email)
+        public async Task<ActionResult<string>> AddFriend(string email)
         {
             User result;
             try
@@ -95,7 +95,7 @@ namespace InnoGotchi_WebApi.Controllers
                 return BadRequest(e.Message);
             }
 
-            return Ok(result);
+            return Ok($"Friend {result.FirstName} {result.LastName} added");
         }
 
         [HttpGet("getFriendsFarms"), Authorize]

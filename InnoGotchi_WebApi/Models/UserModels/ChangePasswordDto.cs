@@ -1,9 +1,19 @@
-﻿namespace InnoGotchi_WebApi.Models.UserModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace InnoGotchi_WebApi.Models.UserModels
 {
     public class ChangePasswordDto
     {
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
-        public string ConfirmNewPassword { get; set; }
+        [Required]
+        [MaxLength(40)]
+        public string OldPassword { get; set; } = "";
+
+        [Required]
+        [MaxLength(40)]
+        public string NewPassword { get; set; } = "";
+
+        [Required]
+        [MaxLength(40)]
+        public string ConfirmNewPassword { get; set; } = "";
     }
 }

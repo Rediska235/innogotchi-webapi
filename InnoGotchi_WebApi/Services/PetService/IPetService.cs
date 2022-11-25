@@ -8,7 +8,6 @@ namespace InnoGotchi_WebApi.Services.PetService
         Pet ChangeName(HttpContext httpContext, PetChangeNameDto request);
         Pet GetDetails(HttpContext httpContext, int id);
         List<Pet> GetAllPets();
-
         Pet GiveFood(HttpContext httpContext, int id);
         Pet GiveWater(HttpContext httpContext, int id);
     }

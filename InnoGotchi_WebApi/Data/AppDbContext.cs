@@ -3,7 +3,6 @@ using InnoGotchi_WebApi.Models.FarmModels;
 using InnoGotchi_WebApi.Models.PetModels;
 using Microsoft.EntityFrameworkCore;
 using InnoGotchi_WebApi.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace InnoGotchi_WebApi.Data
 {
@@ -18,6 +17,7 @@ namespace InnoGotchi_WebApi.Data
         {
             Database.EnsureCreated();
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()

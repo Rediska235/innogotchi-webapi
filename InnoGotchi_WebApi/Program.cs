@@ -30,7 +30,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 builder.Configuration.GetSection("JWT:Key").Value)),
             ValidateIssuer = false,
             ValidateAudience = false
-    };
+        };
     });
 
 builder.Services.AddDbContext<AppDbContext>(options =>

@@ -9,28 +9,26 @@ namespace InnoGotchi_WebApi.Services.UserService
 {
     public class UserService : IUserService
     {
-        private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly IConfiguration _configuration;
-
         Exception alreadyExists = new Exception("The user with this email already exists.");
         Exception invalidPassword = new Exception("Invalid password.");
-        Exception passNotMatch = new Exception("Passwords do not match.");
+        Exception passNotMatch = new Exception("New passwords do not match.");
         Exception wrongPassword = new Exception("Wrong password.");
         Exception userNotFound = new Exception("User not found.");
 
+        private readonly AppDbContext _db;
+        private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
+        
         public UserService(AppDbContext context, IMapper mapper, IConfiguration configuration)
         {
             _db = context;
             _mapper = mapper;
             _configuration = configuration;
         }
-
-
+        
         public User Register(UserRegisterDto request)
         {
             var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);
-
             if (user != null)
             {
                 throw alreadyExists;
@@ -48,7 +46,6 @@ namespace InnoGotchi_WebApi.Services.UserService
         public string Login(UserLoginDto request)
         {
             var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);
-
             if (user == null)
             {
                 throw userNotFound;
@@ -68,7 +65,7 @@ namespace InnoGotchi_WebApi.Services.UserService
 
         public string CreateToken(User user, string secretKey)
         {
-            List<Claim> claims = new List<Claim>
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName),
@@ -91,19 +88,13 @@ namespace InnoGotchi_WebApi.Services.UserService
 
         public User GetDetails(HttpContext httpContext)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-
-            return user;
+            return Utils.GetUserByContext(_db, httpContext);
         }
 
         public User ChangePassword(HttpContext httpContext, ChangePasswordDto input)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
-            
+            var user = Utils.GetUserByContext(_db, httpContext);
+
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(input.OldPassword, user.PasswordHash);
             if (!isValidPassword)
             {
@@ -125,9 +116,7 @@ namespace InnoGotchi_WebApi.Services.UserService
         
         public User ChangeUsername(HttpContext httpContext, ChangeUsernameDto input)
         {
-            var identity = httpContext.User.Identity as ClaimsIdentity;
-            string email = identity.FindFirst(ClaimTypes.Email).Value;
-            var user = _db.Users.FirstOrDefault(u => u.Email == email);
+            var user = Utils.GetUserByContext(_db, httpContext);
 
             user.FirstName = input.FirstName;
             user.LastName = input.LastName;
