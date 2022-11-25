@@ -14,6 +14,7 @@ namespace InnoGotchi_WebApi.Models.UserModels
         
         [Required]
         [MaxLength(40)]
+        [EmailAddress]
         public string Email { get; set; } = "";
         
         [Required]

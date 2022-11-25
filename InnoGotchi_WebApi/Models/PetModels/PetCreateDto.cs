@@ -9,15 +9,19 @@ namespace InnoGotchi_WebApi.Models.PetModels
         public string Name { get; set; } = "";
 
         [Required]
+        [Range(1, 6)]
         public int Eyes { get; set; }
 
         [Required]
+        [Range(1, 6)]
         public int Nose { get; set; }
 
         [Required]
+        [Range(1, 5)]
         public int Mouth { get; set; }
 
         [Required]
-        public int Ears { get; set; }
+        [Range(1, 5)]
+        public int Body { get; set; }
     }
 }

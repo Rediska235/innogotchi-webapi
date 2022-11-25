@@ -23,7 +23,7 @@ namespace InnoGotchi_WebApi.Models.PetModels
         [JsonIgnore]
         public int Mouth { get; set; }
         [JsonIgnore]
-        public int Ears { get; set; }
+        public int Body { get; set; }
         
         public int Age { get; set; }
         public HungerLevel Hunger { get; set; }
