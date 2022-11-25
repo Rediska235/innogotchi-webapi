@@ -25,7 +25,11 @@ namespace InnoGotchi_WebApi.Services.UserService
             _mapper = mapper;
             _configuration = configuration;
         }
-        
+
+        public UserService()
+        {
+        }
+
         public User Register(UserRegisterDto request)
         {
             var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);

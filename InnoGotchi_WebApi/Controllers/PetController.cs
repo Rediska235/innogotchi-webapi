@@ -33,7 +33,7 @@ namespace InnoGotchi_WebApi.Controllers
             return Ok(pet);
         }
         
-        [HttpPost("changeName")]
+        [HttpPut("changeName")]
         public async Task<ActionResult<Pet>> ChangeName(PetChangeNameDto request)
         {
             Pet pet;

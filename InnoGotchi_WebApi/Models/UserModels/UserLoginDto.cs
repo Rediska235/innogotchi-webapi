@@ -10,7 +10,7 @@ namespace InnoGotchi_WebApi.Models.UserModels
         public string Email { get; set; } = "";
 
         [Required]
-        [MaxLength(40)]
+        [StringLength(40, MinimumLength = 1)]
         public string Password { get; set; } = "";
     }
 }

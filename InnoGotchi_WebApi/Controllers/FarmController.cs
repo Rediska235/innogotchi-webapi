@@ -34,7 +34,7 @@ namespace InnoGotchi_WebApi.Controllers
             return Ok(result);
         }
         
-        [HttpPost("changeName"), Authorize]
+        [HttpPut("changeName"), Authorize]
         public async Task<ActionResult<Farm>> ChangeName(FarmCreateDto request)
         {
             Farm result;
