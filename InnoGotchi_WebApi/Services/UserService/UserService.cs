@@ -13,6 +13,12 @@ namespace InnoGotchi_WebApi.Services.UserService
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
+        Exception alreadyExists = new Exception("The user with this email already exists.");
+        Exception invalidPassword = new Exception("Invalid password.");
+        Exception passNotMatch = new Exception("Passwords do not match.");
+        Exception wrongPassword = new Exception("Wrong password.");
+        Exception userNotFound = new Exception("User not found.");
+
         public UserService(AppDbContext context, IMapper mapper, IConfiguration configuration)
         {
             _db = context;
@@ -27,7 +33,7 @@ namespace InnoGotchi_WebApi.Services.UserService
 
             if (user != null)
             {
-                throw new Exception("The user with this email already exists.");
+                throw alreadyExists;
             }
 
             user = _mapper.Map<User>(request);
@@ -45,13 +51,13 @@ namespace InnoGotchi_WebApi.Services.UserService
 
             if (user == null)
             {
-                throw new Exception("User not found.");
+                throw userNotFound;
             }
 
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash);
             if (!isValidPassword)
             {
-                throw new Exception("Wrong password.");
+                throw wrongPassword;
             }
 
             string secretKey = _configuration["Jwt:Key"];
@@ -101,12 +107,12 @@ namespace InnoGotchi_WebApi.Services.UserService
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(input.OldPassword, user.PasswordHash);
             if (!isValidPassword)
             {
-                throw new Exception("Invalid password.");
+                throw invalidPassword;
             }
 
             if (input.NewPassword != input.ConfirmNewPassword)
             {
-                throw new Exception("Passwords do not match."); 
+                throw passNotMatch; 
             }
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(input.NewPassword);

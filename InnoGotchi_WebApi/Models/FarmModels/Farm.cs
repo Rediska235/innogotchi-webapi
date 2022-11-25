@@ -1,4 +1,5 @@
-﻿using InnoGotchi_WebApi.Models.UserModels;
+﻿using InnoGotchi_WebApi.Models.PetModels;
+using InnoGotchi_WebApi.Models.UserModels;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -12,14 +13,17 @@ namespace InnoGotchi_WebApi.Models.FarmModels
         public string Name { get; set; } = "";
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        
+        [JsonIgnore]
+        public int UserId { get; set; }
 
         [JsonIgnore]
         public User? User { get; set; }
         
         [JsonIgnore]
-        public int UserId { get; set; }
-       
+        public List<Pet> Pets { get; set; }
+
         [JsonIgnore]
-        public List<FriendFarm> Friends { get; set; } 
+        public List<FriendFarm> Friends { get; set; }
     }
 }

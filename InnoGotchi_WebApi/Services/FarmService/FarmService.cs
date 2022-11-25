@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using InnoGotchi_WebApi.Data;
-using InnoGotchi_WebApi.Migrations;
 using InnoGotchi_WebApi.Models;
 using InnoGotchi_WebApi.Models.FarmModels;
 using InnoGotchi_WebApi.Models.PetModels;
 using InnoGotchi_WebApi.Models.UserModels;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace InnoGotchi_WebApi.Services.FarmService
@@ -13,6 +13,12 @@ namespace InnoGotchi_WebApi.Services.FarmService
     {
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
+
+        Exception dontHaveFarm = new Exception("You don't have a farm.");
+        Exception takenName = new Exception("This name is already taken.");
+        Exception alreadyHaveFarm = new Exception("You already have a farm.");
+        Exception userNotFound = new Exception("User not found.");
+        Exception alreadyFrinds = new Exception("You are already friends with this user.");
 
         public FarmService(AppDbContext db, IMapper mapper)
         {
@@ -26,12 +32,12 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
             if (_db.Farms.Any(f => f.UserId == user.Id))
             {
-                throw new Exception("You already have a farm.");
+                throw alreadyHaveFarm;
             }
 
             if (_db.Farms.Any(f => f.Name == request.Name))
             {
-                throw new Exception("This name is already taken.");
+                throw takenName;
             }
 
             Farm farm = _mapper.Map<Farm>(request);
@@ -58,8 +64,8 @@ namespace InnoGotchi_WebApi.Services.FarmService
         {
             var farm = GetFarmByContext(httpContext);
 
-            int petCount = _db.Pets.Count(p => p.Farm.Id == farm.Id);
-            int aliveCount = _db.Pets.Count(p => p.Farm.Id == farm.Id && p.IsAlive);
+            int petCount = farm.Pets.Count();
+            int aliveCount = farm.Pets.Count(p => p.IsAlive);
             int deadCount = petCount - aliveCount;
 
             FarmDetailsDto result = new FarmDetailsDto
@@ -78,7 +84,7 @@ namespace InnoGotchi_WebApi.Services.FarmService
         {
             var farm = GetFarmByContext(httpContext);
             
-            return _db.Pets.Where(p => p.Farm.Id == farm.Id).ToList();
+            return farm.Pets;
         }
 
         public User AddFriend(HttpContext httpContext, string email)
@@ -89,12 +95,12 @@ namespace InnoGotchi_WebApi.Services.FarmService
 
             if (friend == null)
             {
-                throw new Exception("User not found.");
+                throw userNotFound;
             }
 
             if (_db.FriendFarms.Any(ff => ff.FarmId == farm.Id && ff.UserId == friend.Id))
             {
-                throw new Exception("You are already friends with this user.");
+                throw alreadyFrinds;
             }
 
             _db.FriendFarms.Add(new FriendFarm
@@ -117,10 +123,10 @@ namespace InnoGotchi_WebApi.Services.FarmService
         {
             var user = GetUserByContext(httpContext);
 
-            var farm = _db.Farms.FirstOrDefault(f => f.UserId == user.Id);
+            var farm = _db.Farms.Include(f => f.Pets).FirstOrDefault(f => f.UserId == user.Id);
             if (farm == null)
             {
-                throw new Exception("You don't have a farm.");
+                throw dontHaveFarm;
             }
 
             return farm;

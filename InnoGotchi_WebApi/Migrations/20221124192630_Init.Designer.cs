@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchi_WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221122185659_Init")]
+    [Migration("20221124192630_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,7 +86,7 @@ namespace InnoGotchi_WebApi.Migrations
                     b.Property<int>("Eyes")
                         .HasColumnType("int");
 
-                    b.Property<int>("FarmId")
+                    b.Property<int?>("FarmId")
                         .HasColumnType("int");
 
                     b.Property<int>("HappinessDays")
@@ -190,10 +190,8 @@ namespace InnoGotchi_WebApi.Migrations
             modelBuilder.Entity("InnoGotchi_WebApi.Models.PetModels.Pet", b =>
                 {
                     b.HasOne("InnoGotchi_WebApi.Models.FarmModels.Farm", "Farm")
-                        .WithMany()
-                        .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Pets")
+                        .HasForeignKey("FarmId");
 
                     b.Navigation("Farm");
                 });
@@ -201,6 +199,8 @@ namespace InnoGotchi_WebApi.Migrations
             modelBuilder.Entity("InnoGotchi_WebApi.Models.FarmModels.Farm", b =>
                 {
                     b.Navigation("Friends");
+
+                    b.Navigation("Pets");
                 });
 
             modelBuilder.Entity("InnoGotchi_WebApi.Models.UserModels.User", b =>

@@ -3,6 +3,7 @@ using InnoGotchi_WebApi.Models.FarmModels;
 using InnoGotchi_WebApi.Models.PetModels;
 using Microsoft.EntityFrameworkCore;
 using InnoGotchi_WebApi.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace InnoGotchi_WebApi.Data
 {
@@ -23,7 +24,11 @@ namespace InnoGotchi_WebApi.Data
                 .HasOne(b => b.Farm)
                 .WithOne(i => i.User)
                 .HasForeignKey<Farm>(b => b.UserId);
-
+            
+            modelBuilder.Entity<Farm>()
+                .HasMany(c => c.Pets)
+                .WithOne(e => e.Farm);
+            
             modelBuilder.Entity<FriendFarm>()
                 .HasKey(t => new { t.UserId, t.FarmId });
 

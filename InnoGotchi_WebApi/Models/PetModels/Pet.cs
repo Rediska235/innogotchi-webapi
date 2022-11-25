@@ -10,7 +10,8 @@ namespace InnoGotchi_WebApi.Models.PetModels
         [Required]
         [MaxLength(20)]
         public string Name { get; set; } = "";
-        
+
+        public int? FarmId { get; set; }
         public Farm Farm { get; set; }
         
         public int Eyes { get; set; }        
@@ -27,8 +28,6 @@ namespace InnoGotchi_WebApi.Models.PetModels
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastFed { get; set; } = DateTime.Now;
         public DateTime LastDrank { get; set; } = DateTime.Now;
-
-
 
         // F - for food
         private const int F_NORMAL_LIMIT = 1;

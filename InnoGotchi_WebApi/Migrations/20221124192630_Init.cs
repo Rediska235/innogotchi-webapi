@@ -77,7 +77,7 @@ namespace InnoGotchi_WebApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    FarmId = table.Column<int>(type: "int", nullable: false),
+                    FarmId = table.Column<int>(type: "int", nullable: true),
                     Eyes = table.Column<int>(type: "int", nullable: false),
                     Nose = table.Column<int>(type: "int", nullable: false),
                     Mouth = table.Column<int>(type: "int", nullable: false),
@@ -98,8 +98,7 @@ namespace InnoGotchi_WebApi.Migrations
                         name: "FK_Pets_Farms_FarmId",
                         column: x => x.FarmId,
                         principalTable: "Farms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
