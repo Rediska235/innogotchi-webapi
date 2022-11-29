@@ -17,6 +17,10 @@ namespace InnoGotchi_WebApi.Models.UserModels
         [MaxLength(40)]
         public string Email { get; set; } = "";
 
+        public DateTime CreatedAt { get; set; }
+
+        public int PasswordLength { get; set; }
+
         [JsonIgnore]
         [MaxLength(60)]
         public string? PasswordHash { get; set; } = "";

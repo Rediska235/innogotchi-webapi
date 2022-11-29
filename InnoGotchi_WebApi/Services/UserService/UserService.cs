@@ -39,7 +39,9 @@ namespace InnoGotchi_WebApi.Services.UserService
             }
 
             user = _mapper.Map<User>(request);
+            user.CreatedAt = DateTime.Now;
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+            user.PasswordLength = request.Password.Length;
 
             _db.Add(user);
             _db.SaveChanges();
@@ -111,6 +113,7 @@ namespace InnoGotchi_WebApi.Services.UserService
             }
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(input.NewPassword);
+            user.PasswordLength = input.NewPassword.Length;
 
             _db.Update(user);
             _db.SaveChanges();

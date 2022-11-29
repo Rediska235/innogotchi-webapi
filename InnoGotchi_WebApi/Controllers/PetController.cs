@@ -1,7 +1,6 @@
 ﻿using InnoGotchi_WebApi.Models.PetModels;
 using InnoGotchi_WebApi.Services.PetService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi_WebApi.Controllers
