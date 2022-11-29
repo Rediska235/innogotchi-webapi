@@ -21,6 +21,9 @@ namespace InnoGotchi_WebApi.Models.UserModels
 
         public int PasswordLength { get; set; }
 
+        [MaxLength(50)]
+        public string AvatarFileName { get; set; } = "";
+
         [JsonIgnore]
         [MaxLength(60)]
         public string? PasswordHash { get; set; } = "";

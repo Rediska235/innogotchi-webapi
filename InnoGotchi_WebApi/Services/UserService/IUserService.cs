@@ -10,5 +10,6 @@ namespace InnoGotchi_WebApi.Services.UserService
         User GetDetails(HttpContext httpContext);
         User ChangePassword(HttpContext httpContext, ChangePasswordDto input);
         User ChangeUsername(HttpContext httpContext, ChangeUsernameDto input);
+        void ChangeAvatar(HttpContext httpContext, string fileName);
     }
 }

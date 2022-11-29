@@ -18,12 +18,14 @@ namespace InnoGotchi_WebApi.Services.UserService
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
-        
-        public UserService(AppDbContext context, IMapper mapper, IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+
+        public UserService(AppDbContext context, IMapper mapper, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _db = context;
             _mapper = mapper;
             _configuration = configuration;
+            _environment = environment;
         }
 
         public UserService()
@@ -132,6 +134,15 @@ namespace InnoGotchi_WebApi.Services.UserService
             _db.SaveChanges();
 
             return user;
+        }
+        
+        public void ChangeAvatar(HttpContext httpContext, string fileName)
+        {
+            var user = Utils.GetUserByContext(_db, httpContext);
+            user.AvatarFileName = fileName;
+
+            _db.Update(user);
+            _db.SaveChanges();
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using InnoGotchi_WebApi.Models.UserModels;
 using InnoGotchi_WebApi.Services.UserService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchi_WebApi.Controllers
@@ -75,6 +74,13 @@ namespace InnoGotchi_WebApi.Controllers
         public async Task<ActionResult<User>> ChangeUsername(ChangeUsernameDto input)
         {
             return Ok(_userService.ChangeUsername(HttpContext, input));
+        }
+        
+        [HttpPut("changeAvatar/{fileName}"), Authorize]
+        public async Task<ActionResult> ChangeAvatar(string fileName)
+        {
+            _userService.ChangeAvatar(HttpContext, fileName);
+            return Ok();
         }
     }
 }
