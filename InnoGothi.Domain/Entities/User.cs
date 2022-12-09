@@ -27,6 +27,12 @@ namespace InnoGotchi.Domain.Entities
         [MaxLength(60)]
         public string? PasswordHash { get; set; } = "";
 
+        public string RefreshToken { get; set; } = "";
+        
+        public DateTime TokenCreated { get; set; }
+       
+        public DateTime TokenExpires { get; set; }
+
         [JsonIgnore]
         public Farm? Farm { get; set; }
 

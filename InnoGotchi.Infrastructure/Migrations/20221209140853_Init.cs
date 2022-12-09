@@ -9,7 +9,7 @@ namespace InnoGotchi.Infrastructure.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -110,7 +110,7 @@ namespace InnoGotchi.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Pets_FarmId",
                 table: "Pets",
-                column: "FarmId");
+                column: "FarmId");*/
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

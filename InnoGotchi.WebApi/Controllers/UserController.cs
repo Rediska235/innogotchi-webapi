@@ -42,7 +42,7 @@ namespace InnoGotchi.WebApi.Controllers
             string result;
             try
             {
-                result = _userService.Login(request, secretKey);
+                result = _userService.Login(request, secretKey, HttpContext);
             }
             catch (Exception e)
             {
@@ -51,6 +51,24 @@ namespace InnoGotchi.WebApi.Controllers
             
             return Ok(result);
         }
+        
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<string>> RefreshToken()
+        {
+            string secretKey = _configuration.GetSection("JWT:Key").Value;
+            string result;
+            try
+            {
+                result = _userService.RefreshToken(HttpContext, secretKey);
+            }
+            catch (Exception e)
+            {
+                return Unauthorized(e.Message);
+            }
+
+            return Ok(result);
+        }
+
 
         [HttpGet("getDetails"), Authorize]
         public async Task<ActionResult<User>> GetDetails()

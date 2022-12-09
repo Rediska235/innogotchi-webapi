@@ -2,14 +2,11 @@
 using InnoGotchi.Application.Dtos.UserModels;
 using InnoGotchi.Application.Exceptions;
 using InnoGotchi.Application.Interfaces;
+using InnoGotchi.Domain;
 using InnoGotchi.Domain.Entities;
 using InnoGotchi.Infrastructure.Data;
 using InnoGotchi.Infrastructure.UtilsFolder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace InnoGotchi.Infrastructure.Repositories
 {
@@ -17,19 +14,19 @@ namespace InnoGotchi.Infrastructure.Repositories
     {
         AlreadyExistsException userAlreadyExists = new AlreadyExistsException("The user with this email already exists.");
         NotFoundException userNotFound = new NotFoundException("User not found.");
+        NotAllowedException invalidRefreshToken = new NotAllowedException("Invalid refresh token.");
+        NotAllowedException refreshTokenExpired = new NotAllowedException("Refresh token expired.");
         InvalidPasswordException invalidPassword = new InvalidPasswordException("Invalid password.");
         InvalidPasswordException passNotMatch = new InvalidPasswordException("New passwords do not match.");
         InvalidPasswordException wrongPassword = new InvalidPasswordException("Wrong password.");
 
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
-        private readonly IConfiguration _config;
 
-        public UserRepository(AppDbContext db, IMapper mapper, IConfiguration config)
+        public UserRepository(AppDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
-            _config = config;
         }
 
         public User Register(UserRegisterDto request)
@@ -51,7 +48,7 @@ namespace InnoGotchi.Infrastructure.Repositories
             return user;
         }
 
-        public string Login(UserLoginDto request, string secretKey)
+        public string Login(UserLoginDto request, string secretKey, HttpContext httpContext)
         {
             var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);
             if (user == null)
@@ -65,34 +62,37 @@ namespace InnoGotchi.Infrastructure.Repositories
                 throw wrongPassword;
             }
            
-            string token = CreateToken(user, secretKey);
+            string token = JwtManager.CreateToken(user, secretKey);
+
+            RefreshToken refreshToken = JwtManager.GenerateRefreshToken();
+            JwtManager.SetRefreshToken(refreshToken, httpContext, user);
+            _db.SaveChanges();
 
             return token;
         }
-
-        public string CreateToken(User user, string secretKey)
+        
+        public string RefreshToken(HttpContext httpContext, string secretKey)
         {
-            var claims = new List<Claim>
+            var refreshToken = httpContext.Request.Cookies["refreshToken"];
+            var user = _db.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
+            if (user == null)
             {
-                new Claim(ClaimTypes.Name, user.FirstName),
-                new Claim(ClaimTypes.Surname, user.LastName),
-                new Claim(ClaimTypes.Email, user.Email),
-            };
+                throw invalidRefreshToken;
+            }
+            else if (user.TokenExpires < DateTime.Now)
+            {
+                throw refreshTokenExpired;
+            }
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(secretKey));
+            string token = JwtManager.CreateToken(user, secretKey);
+            
+            var newRefreshToken = JwtManager.GenerateRefreshToken();
+            JwtManager.SetRefreshToken(newRefreshToken, httpContext, user);
+            _db.SaveChanges();
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
+            return token;
         }
-
+        
         public User GetDetails(HttpContext httpContext)
         {
             return Utils.GetUserByContext(_db, httpContext);

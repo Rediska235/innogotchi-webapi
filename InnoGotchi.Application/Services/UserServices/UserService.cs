@@ -22,9 +22,9 @@ namespace InnoGotchi.Application.Services
             return user;
         }
 
-        public string Login(UserLoginDto request, string secretKey)
+        public string Login(UserLoginDto request, string secretKey, HttpContext httpContext)
         {
-            var token = _userRepository.Login(request, secretKey);
+            var token = _userRepository.Login(request, secretKey, httpContext);
 
             return token;
         }
@@ -51,6 +51,13 @@ namespace InnoGotchi.Application.Services
         public void ChangeAvatar(HttpContext httpContext, string fileName)
         {
             _userRepository.ChangeAvatar(httpContext, fileName);
+        }
+
+        public string RefreshToken(HttpContext httpContext, string secretKey)
+        {
+            var token = _userRepository.RefreshToken(httpContext, secretKey);
+
+            return token;
         }
     }
 }
