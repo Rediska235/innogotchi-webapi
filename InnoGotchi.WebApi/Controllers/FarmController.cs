@@ -23,7 +23,7 @@ namespace InnoGotchi.WebApi.Controllers
             Farm result;
             try
             {
-                result = _farmService.CreateFarm(HttpContext, request);
+                result = _farmService.CreateFarm(request);
             }
             catch (Exception e)
             {
@@ -39,7 +39,7 @@ namespace InnoGotchi.WebApi.Controllers
             Farm result;
             try
             {
-                result = _farmService.ChangeName(HttpContext, request);
+                result = _farmService.ChangeName(request);
             }
             catch (Exception e)
             {
@@ -55,7 +55,7 @@ namespace InnoGotchi.WebApi.Controllers
             FarmDetailsDto result;
             try
             {
-                result = _farmService.GetDetails(HttpContext);
+                result = _farmService.GetDetails();
             }
             catch (Exception e)
             {
@@ -71,7 +71,7 @@ namespace InnoGotchi.WebApi.Controllers
             List<Pet> result;
             try
             {
-                result = _farmService.GetPets(HttpContext);
+                result = _farmService.GetPets();
             }
             catch (Exception e)
             {
@@ -87,7 +87,7 @@ namespace InnoGotchi.WebApi.Controllers
             User result;
             try
             {
-                result = _farmService.AddFriend(HttpContext, email);
+                result = _farmService.AddFriend(email);
             }
             catch (Exception e)
             {
@@ -103,7 +103,7 @@ namespace InnoGotchi.WebApi.Controllers
             List<Farm> result;
             try
             {
-                result = _farmService.GetFriendsFarms(HttpContext);
+                result = _farmService.GetFriendsFarms();
             }
             catch (Exception e)
             {

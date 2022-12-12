@@ -23,7 +23,7 @@ namespace InnoGotchi.WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.CreatePet(HttpContext, request);
+                pet = _petService.CreatePet(request);
             }
             catch (Exception e)
             {
@@ -39,7 +39,7 @@ namespace InnoGotchi.WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.ChangeName(HttpContext, request);
+                pet = _petService.ChangeName(request);
             }
             catch (Exception e)
             {
@@ -56,7 +56,7 @@ namespace InnoGotchi.WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.GetDetails(HttpContext, id);
+                pet = _petService.GetDetails(id);
             }
             catch (Exception e)
             {
@@ -78,7 +78,7 @@ namespace InnoGotchi.WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.GiveFood(HttpContext, id);
+                pet = _petService.GiveFood(id);
             }
             catch (Exception e)
             {
@@ -94,7 +94,7 @@ namespace InnoGotchi.WebApi.Controllers
             Pet pet;
             try
             {
-                pet = _petService.GiveWater(HttpContext, id);
+                pet = _petService.GiveWater(id);
             }
             catch (Exception e)
             {

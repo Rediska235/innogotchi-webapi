@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using InnoGotchi.Application.Dtos.PetModels;
+﻿using InnoGotchi.Application.Dtos.PetModels;
 using InnoGotchi.Application.Interfaces;
 using InnoGotchi.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace InnoGotchi.Application.Services.PetService
 {
@@ -10,28 +8,28 @@ namespace InnoGotchi.Application.Services.PetService
     {
         private readonly IPetRepository _petRepository;
 
-        public PetService(IPetRepository petRepository, IMapper mapper)
+        public PetService(IPetRepository petRepository)
         {
             _petRepository = petRepository;
         }
 
-        public Pet CreatePet(HttpContext httpContext, PetCreateDto request)
+        public Pet CreatePet(PetCreateDto request)
         {
-            var pet = _petRepository.CreatePet(httpContext, request);
+            var pet = _petRepository.CreatePet(request);
 
             return pet;
         }
 
-        public Pet ChangeName(HttpContext httpContext, PetChangeNameDto request)
+        public Pet ChangeName(PetChangeNameDto request)
         {
-            var pet = _petRepository.ChangeName(httpContext, request);
+            var pet = _petRepository.ChangeName(request);
 
             return pet;
         }
 
-        public Pet GetDetails(HttpContext httpContext, int id)
+        public Pet GetDetails(int id)
         {
-            var pet = _petRepository.GetDetails(httpContext, id);
+            var pet = _petRepository.GetDetails(id);
 
             return pet;
         }
@@ -43,16 +41,16 @@ namespace InnoGotchi.Application.Services.PetService
             return pets;
         }
 
-        public Pet GiveFood(HttpContext httpContext, int id)
+        public Pet GiveFood(int id)
         {
-            var pet = _petRepository.GiveFood(httpContext, id);
+            var pet = _petRepository.GiveFood(id);
 
             return pet;
         }
 
-        public Pet GiveWater(HttpContext httpContext, int id)
+        public Pet GiveWater(int id)
         {
-            var pet = _petRepository.GiveWater(httpContext, id);
+            var pet = _petRepository.GiveWater(id);
 
             return pet;
         }

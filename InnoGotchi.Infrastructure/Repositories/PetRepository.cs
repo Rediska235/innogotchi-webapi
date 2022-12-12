@@ -15,20 +15,23 @@ namespace InnoGotchi.Infrastructure.Repositories
         NotAllowedException dontHaveFarm = new NotAllowedException("You don't have a farm.");
         AlreadyExistsException takenName = new AlreadyExistsException("This name is already taken.");
         NotAllowedException notYourPet = new NotAllowedException("You cannot interact with this pet.");
+        NotAllowedException cantChangeName = new NotAllowedException("You cannot change the name of this pet.");
         NotAllowedException deadPet = new NotAllowedException("This pet is dead.");
 
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PetRepository(AppDbContext context, IMapper mapper)
+        public PetRepository(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _db = context;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public Pet CreatePet(HttpContext httpContext, PetCreateDto request)
+        public Pet CreatePet(PetCreateDto request)
         {
-            var farm = Utils.GetFarmByContext(_db, httpContext);
+            var farm = Utils.GetFarmByContext(_db, _httpContextAccessor.HttpContext);
             if (farm == null)
             {
                 throw dontHaveFarm;
@@ -48,14 +51,14 @@ namespace InnoGotchi.Infrastructure.Repositories
             return pet;
         }
 
-        public Pet ChangeName(HttpContext httpContext, PetChangeNameDto request)
+        public Pet ChangeName(PetChangeNameDto request)
         {
             var pet = Utils.GetPetById(_db, request.Id);
 
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
             if (!IsMyPet(user, pet))
             {
-                throw notYourPet;
+                throw cantChangeName;
             }
 
             pet.Name = request.Name;
@@ -67,11 +70,11 @@ namespace InnoGotchi.Infrastructure.Repositories
             return pet;
         }
 
-        public Pet GetDetails(HttpContext httpContext, int id)
+        public Pet GetDetails(int id)
         {
             var pet = Utils.GetPetById(_db, id);
 
-            if (!IsMyOrFriendsPet(httpContext, pet))
+            if (!IsMyOrFriendsPet(pet))
             {
                 throw notYourPet;
             }
@@ -96,11 +99,11 @@ namespace InnoGotchi.Infrastructure.Repositories
             return pets;
         }
 
-        public Pet GiveFood(HttpContext httpContext, int id)
+        public Pet GiveFood(int id)
         {
             var pet = Utils.GetPetById(_db, id);
 
-            if (!IsMyOrFriendsPet(httpContext, pet))
+            if (!IsMyOrFriendsPet(pet))
             {
                 throw notYourPet;
             }
@@ -119,11 +122,11 @@ namespace InnoGotchi.Infrastructure.Repositories
             return pet;
         }
 
-        public Pet GiveWater(HttpContext httpContext, int id)
+        public Pet GiveWater(int id)
         {
             var pet = Utils.GetPetById(_db, id);
 
-            if (!IsMyOrFriendsPet(httpContext, pet))
+            if (!IsMyOrFriendsPet(pet))
             {
                 throw notYourPet;
             }
@@ -142,9 +145,9 @@ namespace InnoGotchi.Infrastructure.Repositories
             return pet;
         }
 
-        private bool IsMyOrFriendsPet(HttpContext httpContext, Pet pet)
+        private bool IsMyOrFriendsPet(Pet pet)
         {
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
             var friendsFarms = user.FriendsFarms.Select(ff => ff.Farm).ToList();
 
             if (friendsFarms.Any(f => f.Pets.Contains(pet)))
@@ -161,7 +164,7 @@ namespace InnoGotchi.Infrastructure.Repositories
 
             if(farm == null)
             {
-                throw notYourPet;
+                return false;
             }
 
             if (farm.Pets.Contains(pet))

@@ -42,7 +42,7 @@ namespace InnoGotchi.WebApi.Controllers
             string result;
             try
             {
-                result = _userService.Login(request, secretKey, HttpContext);
+                result = _userService.Login(request, secretKey);
             }
             catch (Exception e)
             {
@@ -59,7 +59,7 @@ namespace InnoGotchi.WebApi.Controllers
             string result;
             try
             {
-                result = _userService.RefreshToken(HttpContext, secretKey);
+                result = _userService.RefreshToken(secretKey);
             }
             catch (Exception e)
             {
@@ -73,7 +73,7 @@ namespace InnoGotchi.WebApi.Controllers
         [HttpGet("getDetails"), Authorize]
         public async Task<ActionResult<User>> GetDetails()
         {
-            return Ok(_userService.GetDetails(HttpContext));
+            return Ok(_userService.GetDetails());
         }
 
         [HttpPut("changePassword"), Authorize]
@@ -82,7 +82,7 @@ namespace InnoGotchi.WebApi.Controllers
             User result;
             try
             {
-                result = _userService.ChangePassword(HttpContext, input);
+                result = _userService.ChangePassword(input);
             }
             catch (Exception e)
             {
@@ -95,13 +95,13 @@ namespace InnoGotchi.WebApi.Controllers
         [HttpPut("changeUsername"), Authorize]
         public async Task<ActionResult<User>> ChangeUsername(ChangeUsernameDto input)
         {
-            return Ok(_userService.ChangeUsername(HttpContext, input));
+            return Ok(_userService.ChangeUsername(input));
         }
         
         [HttpPut("changeAvatar/{fileName}"), Authorize]
         public async Task<ActionResult> ChangeAvatar(string fileName)
         {
-            _userService.ChangeAvatar(HttpContext, fileName);
+            _userService.ChangeAvatar(fileName);
             return Ok();
         }
     }

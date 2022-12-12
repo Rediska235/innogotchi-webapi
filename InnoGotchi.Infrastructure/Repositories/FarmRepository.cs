@@ -18,16 +18,18 @@ namespace InnoGotchi.Infrastructure.Repositories
 
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public FarmRepository(AppDbContext db, IMapper mapper)
+        public FarmRepository(AppDbContext db, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public Farm CreateFarm(HttpContext httpContext, FarmCreateDto request)
+        public Farm CreateFarm(FarmCreateDto request)
         {
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
 
             if (_db.Farms.Any(f => f.UserId == user.Id))
             {
@@ -49,9 +51,9 @@ namespace InnoGotchi.Infrastructure.Repositories
             return farm;
         }
 
-        public Farm ChangeName(HttpContext httpContext, FarmCreateDto request)
+        public Farm ChangeName(FarmCreateDto request)
         {
-            var farm = Utils.GetFarmByContext(_db, httpContext);
+            var farm = Utils.GetFarmByContext(_db, _httpContextAccessor.HttpContext);
             farm.Name = request.Name;
 
             _db.Farms.Update(farm);
@@ -60,9 +62,9 @@ namespace InnoGotchi.Infrastructure.Repositories
             return farm;
         }
 
-        public FarmDetailsDto GetDetails(HttpContext httpContext)
+        public FarmDetailsDto GetDetails()
         {
-            var farm = Utils.GetFarmByContext(_db, httpContext);
+            var farm = Utils.GetFarmByContext(_db, _httpContextAccessor.HttpContext);
 
             int petCount = farm.Pets.Count();
             int aliveCount = farm.Pets.Count(p => p.IsAlive);
@@ -80,16 +82,16 @@ namespace InnoGotchi.Infrastructure.Repositories
             return result;
         }
 
-        public List<Pet> GetPets(HttpContext httpContext)
+        public List<Pet> GetPets()
         {
-            var farm = Utils.GetFarmByContext(_db, httpContext);
+            var farm = Utils.GetFarmByContext(_db, _httpContextAccessor.HttpContext);
 
             return farm.Pets;
         }
 
-        public User AddFriend(HttpContext httpContext, string email)
+        public User AddFriend(string email)
         {
-            var farm = Utils.GetFarmByContext(_db, httpContext);
+            var farm = Utils.GetFarmByContext(_db, _httpContextAccessor.HttpContext);
 
             var friend = _db.Users.FirstOrDefault(u => u.Email == email);
             if (friend == null)
@@ -112,9 +114,9 @@ namespace InnoGotchi.Infrastructure.Repositories
             return friend;
         }
 
-        public List<Farm> GetFriendsFarms(HttpContext httpContext)
+        public List<Farm> GetFriendsFarms()
         {
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
             
             return user.FriendsFarms.Select(ff => ff.Farm).ToList();
         }

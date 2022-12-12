@@ -22,11 +22,13 @@ namespace InnoGotchi.Infrastructure.Repositories
 
         private readonly AppDbContext _db;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserRepository(AppDbContext db, IMapper mapper)
+        public UserRepository(AppDbContext db, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _db = db;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public User Register(UserRegisterDto request)
@@ -48,7 +50,7 @@ namespace InnoGotchi.Infrastructure.Repositories
             return user;
         }
 
-        public string Login(UserLoginDto request, string secretKey, HttpContext httpContext)
+        public string Login(UserLoginDto request, string secretKey)
         {
             var user = _db.Users.FirstOrDefault(u => u.Email == request.Email);
             if (user == null)
@@ -65,15 +67,15 @@ namespace InnoGotchi.Infrastructure.Repositories
             string token = JwtManager.CreateToken(user, secretKey);
 
             RefreshToken refreshToken = JwtManager.GenerateRefreshToken();
-            JwtManager.SetRefreshToken(refreshToken, httpContext, user);
+            JwtManager.SetRefreshToken(refreshToken, _httpContextAccessor.HttpContext, user);
             _db.SaveChanges();
 
             return token;
         }
         
-        public string RefreshToken(HttpContext httpContext, string secretKey)
+        public string RefreshToken(string secretKey)
         {
-            var refreshToken = httpContext.Request.Cookies["refreshToken"];
+            var refreshToken = _httpContextAccessor.HttpContext.Request.Cookies["refreshToken"];
             var user = _db.Users.FirstOrDefault(u => u.RefreshToken == refreshToken);
             if (user == null)
             {
@@ -87,20 +89,20 @@ namespace InnoGotchi.Infrastructure.Repositories
             string token = JwtManager.CreateToken(user, secretKey);
             
             var newRefreshToken = JwtManager.GenerateRefreshToken();
-            JwtManager.SetRefreshToken(newRefreshToken, httpContext, user);
+            JwtManager.SetRefreshToken(newRefreshToken, _httpContextAccessor.HttpContext, user);
             _db.SaveChanges();
 
             return token;
         }
         
-        public User GetDetails(HttpContext httpContext)
+        public User GetDetails()
         {
-            return Utils.GetUserByContext(_db, httpContext);
+            return Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
         }
 
-        public User ChangePassword(HttpContext httpContext, ChangePasswordDto input)
+        public User ChangePassword(ChangePasswordDto input)
         {
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
 
             bool isValidPassword = BCrypt.Net.BCrypt.Verify(input.OldPassword, user.PasswordHash);
             if (!isValidPassword)
@@ -122,9 +124,9 @@ namespace InnoGotchi.Infrastructure.Repositories
             return user;
         }
 
-        public User ChangeUsername(HttpContext httpContext, ChangeUsernameDto input)
+        public User ChangeUsername(ChangeUsernameDto input)
         {
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
 
             user.FirstName = input.FirstName;
             user.LastName = input.LastName;
@@ -135,9 +137,9 @@ namespace InnoGotchi.Infrastructure.Repositories
             return user;
         }
 
-        public void ChangeAvatar(HttpContext httpContext, string fileName)
+        public void ChangeAvatar(string fileName)
         {
-            var user = Utils.GetUserByContext(_db, httpContext);
+            var user = Utils.GetUserByContext(_db, _httpContextAccessor.HttpContext);
             user.AvatarFileName = fileName;
 
             _db.Users.Update(user);

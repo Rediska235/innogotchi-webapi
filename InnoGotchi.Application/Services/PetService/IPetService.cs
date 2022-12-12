@@ -1,17 +1,16 @@
 ﻿
 using InnoGotchi.Application.Dtos.PetModels;
 using InnoGotchi.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace InnoGotchi.Application.Services.PetService
 {
     public interface IPetService
     {
-        Pet CreatePet(HttpContext httpContext, PetCreateDto request);
-        Pet ChangeName(HttpContext httpContext, PetChangeNameDto request);
-        Pet GetDetails(HttpContext httpContext, int id);
+        Pet CreatePet(PetCreateDto request);
+        Pet ChangeName(PetChangeNameDto request);
+        Pet GetDetails(int id);
         List<Pet> GetAllPets();
-        Pet GiveFood(HttpContext httpContext, int id);
-        Pet GiveWater(HttpContext httpContext, int id);
+        Pet GiveFood(int id);
+        Pet GiveWater(int id);
     }
 }

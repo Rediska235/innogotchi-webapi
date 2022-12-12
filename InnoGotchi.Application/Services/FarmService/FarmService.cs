@@ -1,7 +1,6 @@
 ﻿using InnoGotchi.Application.Dtos.FarmModels;
 using InnoGotchi.Application.Interfaces;
 using InnoGotchi.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace InnoGotchi.Application.Services.FarmService
 {
@@ -14,44 +13,44 @@ namespace InnoGotchi.Application.Services.FarmService
             _farmRepository = farmRepository;
         }
 
-        public Farm CreateFarm(HttpContext httpContext, FarmCreateDto request)
+        public Farm CreateFarm(FarmCreateDto request)
         {
-            var farm = _farmRepository.CreateFarm(httpContext, request);
+            var farm = _farmRepository.CreateFarm(request);
 
             return farm;
         }
 
-        public Farm ChangeName(HttpContext httpContext, FarmCreateDto request)
+        public Farm ChangeName(FarmCreateDto request)
         {
-            var farm = _farmRepository.ChangeName(httpContext, request);
+            var farm = _farmRepository.ChangeName(request);
 
             return farm;
         }
 
-        public FarmDetailsDto GetDetails(HttpContext httpContext)
+        public FarmDetailsDto GetDetails()
         {
-            FarmDetailsDto result = _farmRepository.GetDetails(httpContext);
+            FarmDetailsDto result = _farmRepository.GetDetails();
 
             return result;
         }
 
-        public List<Pet> GetPets(HttpContext httpContext)
+        public List<Pet> GetPets()
         {
-            var pets = _farmRepository.GetPets(httpContext);
+            var pets = _farmRepository.GetPets();
 
             return pets;
         }
 
-        public User AddFriend(HttpContext httpContext, string email)
+        public User AddFriend(string email)
         {
-            var friend = _farmRepository.AddFriend(httpContext, email);
+            var friend = _farmRepository.AddFriend(email);
 
             return friend;
         }
 
-        public List<Farm> GetFriendsFarms(HttpContext httpContext)
+        public List<Farm> GetFriendsFarms()
         {
-            var farms = _farmRepository.GetFriendsFarms(httpContext);
+            var farms = _farmRepository.GetFriendsFarms();
 
             return farms;
         }

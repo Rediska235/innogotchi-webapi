@@ -2,7 +2,6 @@
 using InnoGotchi.Application.Interfaces;
 using InnoGotchi.Application.Services.UserServices;
 using InnoGotchi.Domain.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace InnoGotchi.Application.Services
 {
@@ -22,40 +21,40 @@ namespace InnoGotchi.Application.Services
             return user;
         }
 
-        public string Login(UserLoginDto request, string secretKey, HttpContext httpContext)
+        public string Login(UserLoginDto request, string secretKey)
         {
-            var token = _userRepository.Login(request, secretKey, httpContext);
+            var token = _userRepository.Login(request, secretKey);
 
             return token;
         }
         
-        public User GetDetails(HttpContext httpContext)
+        public User GetDetails()
         {
-            return _userRepository.GetDetails(httpContext);
+            return _userRepository.GetDetails();
         }
 
-        public User ChangePassword(HttpContext httpContext, ChangePasswordDto input)
+        public User ChangePassword(ChangePasswordDto input)
         {
-            var user = _userRepository.ChangePassword(httpContext, input);
+            var user = _userRepository.ChangePassword(input);
 
             return user;
         }
 
-        public User ChangeUsername(HttpContext httpContext, ChangeUsernameDto input)
+        public User ChangeUsername(ChangeUsernameDto input)
         {
-            var user = _userRepository.ChangeUsername(httpContext, input);
+            var user = _userRepository.ChangeUsername(input);
 
             return user;
         }
 
-        public void ChangeAvatar(HttpContext httpContext, string fileName)
+        public void ChangeAvatar(string fileName)
         {
-            _userRepository.ChangeAvatar(httpContext, fileName);
+            _userRepository.ChangeAvatar(fileName);
         }
 
-        public string RefreshToken(HttpContext httpContext, string secretKey)
+        public string RefreshToken(string secretKey)
         {
-            var token = _userRepository.RefreshToken(httpContext, secretKey);
+            var token = _userRepository.RefreshToken(secretKey);
 
             return token;
         }
