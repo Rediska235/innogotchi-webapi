@@ -16,16 +16,12 @@ namespace InnoGotchi.Application.Services
 
         public User Register(UserRegisterDto request)
         {
-            var user = _userRepository.Register(request);
-
-            return user;
+            return _userRepository.Register(request);
         }
 
         public string Login(UserLoginDto request, string secretKey)
         {
-            var token = _userRepository.Login(request, secretKey);
-
-            return token;
+            return _userRepository.Login(request, secretKey);
         }
         
         public User GetDetails()
@@ -35,16 +31,12 @@ namespace InnoGotchi.Application.Services
 
         public User ChangePassword(ChangePasswordDto input)
         {
-            var user = _userRepository.ChangePassword(input);
-
-            return user;
+            return _userRepository.ChangePassword(input);
         }
 
         public User ChangeUsername(ChangeUsernameDto input)
         {
-            var user = _userRepository.ChangeUsername(input);
-
-            return user;
+            return _userRepository.ChangeUsername(input);
         }
 
         public void ChangeAvatar(string fileName)
@@ -54,9 +46,7 @@ namespace InnoGotchi.Application.Services
 
         public string RefreshToken(string secretKey)
         {
-            var token = _userRepository.RefreshToken(secretKey);
-
-            return token;
+            return _userRepository.RefreshToken(secretKey);
         }
     }
 }

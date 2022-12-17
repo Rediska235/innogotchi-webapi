@@ -15,44 +15,32 @@ namespace InnoGotchi.Application.Services.FarmService
 
         public Farm CreateFarm(FarmCreateDto request)
         {
-            var farm = _farmRepository.CreateFarm(request);
-
-            return farm;
+            return _farmRepository.CreateFarm(request);
         }
 
         public Farm ChangeName(FarmCreateDto request)
         {
-            var farm = _farmRepository.ChangeName(request);
-
-            return farm;
+            return _farmRepository.ChangeName(request);
         }
 
         public FarmDetailsDto GetDetails()
         {
-            FarmDetailsDto result = _farmRepository.GetDetails();
-
-            return result;
+            return _farmRepository.GetDetails();
         }
 
         public List<Pet> GetPets()
         {
-            var pets = _farmRepository.GetPets();
-
-            return pets;
+            return _farmRepository.GetPets();
         }
 
         public User AddFriend(string email)
         {
-            var friend = _farmRepository.AddFriend(email);
-
-            return friend;
+            return _farmRepository.AddFriend(email);
         }
 
         public List<Farm> GetFriendsFarms()
         {
-            var farms = _farmRepository.GetFriendsFarms();
-
-            return farms;
+            return _farmRepository.GetFriendsFarms();
         }
     }
 }

@@ -15,44 +15,32 @@ namespace InnoGotchi.Application.Services.PetService
 
         public Pet CreatePet(PetCreateDto request)
         {
-            var pet = _petRepository.CreatePet(request);
-
-            return pet;
+            return _petRepository.CreatePet(request);
         }
 
         public Pet ChangeName(PetChangeNameDto request)
         {
-            var pet = _petRepository.ChangeName(request);
-
-            return pet;
+            return _petRepository.ChangeName(request);
         }
 
         public Pet GetDetails(int id)
         {
-            var pet = _petRepository.GetDetails(id);
-
-            return pet;
+            return _petRepository.GetDetails(id);
         }
 
         public List<Pet> GetAllPets()
         {
-            var pets = _petRepository.GetAllPets();
-
-            return pets;
+            return _petRepository.GetAllPets();
         }
 
         public Pet GiveFood(int id)
         {
-            var pet = _petRepository.GiveFood(id);
-
-            return pet;
+            return _petRepository.GiveFood(id);
         }
 
         public Pet GiveWater(int id)
         {
-            var pet = _petRepository.GiveWater(id);
-
-            return pet;
+            return _petRepository.GiveWater(id);
         }
     }
 }
