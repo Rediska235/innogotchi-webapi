@@ -21,6 +21,7 @@ namespace InnoGotchi.Infrastructure.UtilsFolder
                 .ThenInclude(ff => ff.Farm)
                 .ThenInclude(f => f.Pets)
                 .Include(u => u.Farm)
+                .ThenInclude(f => f.Pets)
                 .FirstOrDefault(u => u.Email == email);
 
             return user;

@@ -61,6 +61,11 @@ namespace InnoGotchi.Infrastructure.Repositories
                 throw cantChangeName;
             }
 
+            if (_db.Pets.Any(p => p.Name == request.Name))
+            {
+                throw takenName;
+            }
+            
             pet.Name = request.Name;
             pet.SetVitalSigns();
 

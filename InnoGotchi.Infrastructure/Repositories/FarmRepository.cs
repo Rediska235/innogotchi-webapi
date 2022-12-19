@@ -44,6 +44,7 @@ namespace InnoGotchi.Infrastructure.Repositories
             var farm = _mapper.Map<Farm>(request);
             farm.User = user;
             farm.UserId = user.Id;
+            farm.Pets = new List<Pet>();
 
             _db.Farms.Add(farm);    
             _db.SaveChanges();
